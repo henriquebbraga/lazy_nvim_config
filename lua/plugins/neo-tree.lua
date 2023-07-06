@@ -4,6 +4,7 @@ return {
     window = {
       mappings = {
         ["o"] = "open",
+        ["s"] = "none",
       },
     },
   },
