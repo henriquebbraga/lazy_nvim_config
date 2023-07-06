@@ -16,6 +16,18 @@ local function map(mode, lhs, rhs, opts)
   vim.keymap.set(mode, lhs, rhs, default_opts)
 end
 
+function Clean_marks()
+  vim.cmd("delmarks 0-9")
+  vim.cmd("delmarks [")
+  vim.cmd("delmarks ]")
+  vim.cmd("delmarks <")
+  vim.cmd("delmarks >")
+  vim.cmd("delmarks ^")
+  vim.cmd("delmarks .")
+  vim.cmd('delmarks \\"')
+  vim.cmd(":Telescope marks")
+end
+
 -- MAPS AREA
 
 -- tab
@@ -36,7 +48,15 @@ map("v", "s", "<cmd>Pounce<cr>", { desc = "Pounce" })
 
 -- ERGO MECH KEYBOARD SHORTCUTS
 -- window move
-map("n", "<leader>re", "<C-w>k", { desc = "Go to window above" })
-map("n", "<leader>ru", "<C-w>j", { desc = "Go to window below" })
-map("n", "<leader>ri", "<C-w>l", { desc = "Go to window to the right" })
-map("n", "<leader>rn", "<C-w>h", { desc = "Go to window to the left" })
+map("n", "<BS>e", "<C-w>k", { desc = "Go to window above" })
+map("n", "<BS>u", "<C-w>j", { desc = "Go to window below" })
+map("n", "<BS>i", "<C-w>l", { desc = "Go to window to the right" })
+map("n", "<BS>n", "<C-w>h", { desc = "Go to window to the left" })
+
+map("n", "<Cr>", "ciw", { desc = "Change word under cursor" })
+map("n", "<Tab>", ":tabNext<Cr>", { desc = "Next tab" })
+
+map("n", "<BS><BS>", ":lua Clean_marks()<Cr>", { desc = "Mark piker" })
+map("n", "<BS>o", ":Telescope buffers<Cr>", { desc = "Open buffer" })
+
+map("n", "<leader><BS>", ":lua print('pick something!!!!')", { desc = "Change word under cursor" })

@@ -5,6 +5,7 @@ return {
       mappings = {
         ["o"] = "open",
         ["s"] = "none",
+        ["<BS>"] = "none",
       },
     },
   },
