@@ -59,4 +59,5 @@ map("n", "<Tab>", ":tabNext<Cr>", { desc = "Next tab" })
 map("n", "<BS><BS>", ":lua Clean_marks()<Cr>", { desc = "Mark piker" })
 map("n", "<BS>o", ":Telescope buffers<Cr>", { desc = "Open buffer" })
 
-map("n", "<leader><BS>", ":lua print('pick something!!!!')", { desc = "Change word under cursor" })
+map("n", "<leader><BS>", ":lua print('pick something!!!!')<Cr>", { desc = "Change word under cursor" })
+map("n", "<BS><leader>", ":lua print('pick something on this side!!!!')<Cr>", { desc = "Change word under cursor" })
