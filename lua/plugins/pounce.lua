@@ -3,9 +3,9 @@
 -- * `PounceGap`: Characters inside a match that are not part of the pattern.
 -- * `PounceAccept`: "Accept keys" that can be used to jump to the match.
 -- * `PounceAcceptBest`: Highlights the accept key for the best match.
-vim.cmd("hi PounceAcceptBest guibg=#1af025 guifg=#000000")
-vim.cmd("hi PounceAccept guibg=#006aff guifg=#000000")
-vim.cmd("hi PounceMatch guibg=#ffffff guifg=#dddddd")
+vim.cmd("hi PounceAcceptBest guibg=#f23dff guifg=#000000 gui=BOLD")
+vim.cmd("hi PounceAccept guibg=#21daff guifg=#000000 gui=BOLD")
+vim.cmd("hi PounceMatch guibg=#ffffff guifg=#777777")
 vim.cmd("hi PounceGap guibg=#cf915b guifg=#e0bb9b")
 
 return {

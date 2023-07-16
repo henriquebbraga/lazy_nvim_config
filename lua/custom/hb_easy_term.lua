@@ -8,7 +8,7 @@ function HbEasyTermStart()
   local width = vim.api.nvim_win_get_width(0)
 
   vim.cmd("tabnew")
-  vim.cmd("e " .. hb.command_home .. hb.main_command_file)
+  pcall(vim.cmd, "e " .. hb.command_home .. hb.main_command_file)
   hb.command_window = vim.api.nvim_get_current_win()
 
   vim.cmd("vsplit")

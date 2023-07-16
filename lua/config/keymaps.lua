@@ -15,17 +15,9 @@ local function map(mode, lhs, rhs, opts)
   end
   vim.keymap.set(mode, lhs, rhs, default_opts)
 end
-
-function Clean_marks()
-  vim.cmd("delmarks 0-9")
-  vim.cmd("delmarks [")
-  vim.cmd("delmarks ]")
-  vim.cmd("delmarks <")
-  vim.cmd("delmarks >")
-  vim.cmd("delmarks ^")
-  vim.cmd("delmarks .")
-  vim.cmd('delmarks \\"')
-  vim.cmd(":Telescope marks")
+Grap_err, Grapple = pcall(require, "grapple")
+if Grap_err then
+  print("Grapple not loaded")
 end
 
 -- MAPS AREA
@@ -46,6 +38,10 @@ map("i", "<C-l>", "<Esc>A", { desc = "Go to end of the line" })
 map("x", "s", "<cmd>Pounce<cr>", { desc = "Pounce" })
 map("v", "s", "<cmd>Pounce<cr>", { desc = "Pounce" })
 
+-- grapple
+map("n", "<leader>k", ":GrapplePopup tags<Cr>", { desc = "Grapple picker" })
+map("n", "<C-k>", ":lua Grapple.toggle()<Cr>", { desc = "Add Grapple tag" })
+
 -- ERGO MECH KEYBOARD SHORTCUTS
 -- window move
 map("n", "<BS>e", "<C-w>k", { desc = "Go to window above" })
@@ -56,7 +52,8 @@ map("n", "<BS>n", "<C-w>h", { desc = "Go to window to the left" })
 map("n", "<Cr>", "ciw", { desc = "Change word under cursor" })
 map("n", "<Tab>", ":tabNext<Cr>", { desc = "Next tab" })
 
-map("n", "<BS><BS>", ":lua Clean_marks()<Cr>", { desc = "Mark piker" })
+map("n", "<BS><BS>", ":GrapplePopup tags<Cr>", { desc = "Grapple picker" })
+map("n", "<BS>h", ":lua Grapple.toggle()<Cr>", { desc = "Add Grapple tag" })
 map("n", "<BS>o", ":Telescope buffers<Cr>", { desc = "Open buffer" })
 
 map("n", "<leader><BS>", ":lua print('pick something!!!!')<Cr>", { desc = "Change word under cursor" })
