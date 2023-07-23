@@ -53,7 +53,7 @@ map("n", "<Cr>", "ciw", { desc = "Change word under cursor" })
 map("n", "<Tab>", ":tabNext<Cr>", { desc = "Next tab" })
 
 map("n", "<BS><BS>", ":GrapplePopup tags<Cr>", { desc = "Grapple picker" })
-map("n", "<BS>h", ":lua Grapple.toggle()<Cr>", { desc = "Add Grapple tag" })
+map("n", "<BS>h", ":lua Grapple.toggle({key=vim.fn.expand('%:t')})<Cr>", { desc = "Add Grapple tag" })
 map("n", "<BS>o", ":Telescope buffers<Cr>", { desc = "Open buffer" })
 
 map("n", "<leader><BS>", ":lua print('pick something!!!!')<Cr>", { desc = "Change word under cursor" })
