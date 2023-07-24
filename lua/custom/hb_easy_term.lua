@@ -1,6 +1,6 @@
 local hb = {
   command_home = "~/hb_easyterm_commands/",
-  main_command_file = "main.md",
+  main_command_file = "main.sh",
 }
 
 function HbEasyTermStart()
@@ -12,19 +12,29 @@ function HbEasyTermStart()
   hb.command_window = vim.api.nvim_get_current_win()
 
   vim.cmd("vsplit")
-  vim.cmd("vertical resize +" .. ((width / 2) * 0.5))
   vim.cmd("term")
   hb.term_window = vim.api.nvim_get_current_win()
   hb.term_buff_name = vim.api.nvim_buf_get_name(0)
 
-  -- opening and closing it makes the window follow the input line ¯\_(ツ)_/¯
-  local open_and_close = vim.api.nvim_replace_termcodes("i", true, false, true)
-  vim.api.nvim_feedkeys(open_and_close, "t", false)
-  local leave_term_mode = vim.api.nvim_replace_termcodes("<C-\\><C-n>", true, false, true)
-  vim.api.nvim_feedkeys(leave_term_mode, "t", false)
+  vim.cmd("Neotree dir=~/hb_easyterm_commands")
   vim.defer_fn(function()
-    vim.api.nvim_set_current_win(hb.command_window)
-  end, 50)
+    vim.cmd("vertical resize 30")
+
+    vim.api.nvim_set_current_win(hb.term_window)
+
+    vim.defer_fn(function()
+      vim.cmd("vertical resize +" .. ((width / 2) * 0.4))
+
+      -- opening and closing it makes the window follow the input line ¯\_(ツ)_/¯
+      local open_and_close = vim.api.nvim_replace_termcodes("i", true, false, true)
+      vim.api.nvim_feedkeys(open_and_close, "t", false)
+      local leave_term_mode = vim.api.nvim_replace_termcodes("<C-\\><C-n>", true, false, true)
+      vim.api.nvim_feedkeys(leave_term_mode, "t", false)
+      vim.defer_fn(function()
+        vim.api.nvim_set_current_win(hb.command_window)
+      end, 10)
+    end, 20)
+  end, 20)
 end
 
 -- local function getRegister(char)

@@ -8,7 +8,7 @@ local function co_recursive(co)
   end
   vim.defer_fn(function()
     co_recursive(co)
-  end, 1)
+  end, 5)
 end
 
 local function get_closing(character)
