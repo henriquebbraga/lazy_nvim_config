@@ -4,6 +4,8 @@ local hint = [[
   _j_/_u_: move down 5
   _k_/_e_: move up 5
   ^
+  _b_: Toggle block
+  ^
   _d_: Document symbols 
   _n_: Navbuddy
   _f_: Fuzzy finder
@@ -36,6 +38,7 @@ hydra({
     { "d", ":Telescope lsp_document_symbols<Cr>", { exit = true, silent = true } },
     { "f", ":Telescope current_buffer_fuzzy_find<Cr>", { exit = true, silent = true } },
     { "n", ":Navbuddy<CR>", { exit = true, silent = true } },
+    { "b", ":Block<CR>", { silent = true } },
 
     { "q", nil, { exit = true, nowait = true, desc = "exit" } },
   },
