@@ -53,8 +53,13 @@ map("n", "<Cr>", "ciw", { desc = "Change word under cursor" })
 map("n", "<Tab>", ":tabNext<Cr>", { desc = "Next tab" })
 
 map("n", "<BS><BS>", ":GrapplePopup tags<Cr>", { desc = "Grapple picker" })
-map("n", "<BS>h", ":lua Grapple.toggle({key=vim.fn.expand('%:t')})<Cr>", { desc = "Add Grapple tag" })
+map("n", "<BS>g", ":lua Grapple.toggle()<Cr>", { desc = "Add Grapple tag" })
 map("n", "<BS>o", ":Telescope buffers<Cr>", { desc = "Open buffer" })
+map("n", "<BS>m", ":lua print('nothing here yet')", { desc = "nothing" })
+map("n", "<BS>h", ":lua print('nothing here yet')", { desc = "nothing" })
 
-map("n", "<leader><BS>", ":lua print('pick something!!!!')<Cr>", { desc = "Change word under cursor" })
-map("n", "<BS><leader>", ":lua print('pick something on this side!!!!')<Cr>", { desc = "Change word under cursor" })
+map("n", "<leader><BS>", ":lua print('pick something!!!!')<Cr>", { desc = "nothing" })
+map("n", "<BS><leader>", ":lua print('pick something on this side!!!!')<Cr>", { desc = "nothing" })
+
+map("n", "<BS>a", ":lua HBChangeInsideAnything()<Cr>", { desc = "change inside anything" })
+map("n", "<BS>r", ":lua HBChangeTillAnything()<Cr>", { desc = "change till anything" })

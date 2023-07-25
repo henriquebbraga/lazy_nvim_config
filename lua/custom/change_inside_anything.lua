@@ -125,8 +125,3 @@ function HBChangeInsideAnything()
   end)
   co_recursive(main_co)
 end
-
-local opts = { noremap = true, silent = true }
-local keymap = vim.api.nvim_set_keymap
-
-keymap("n", "<BS>a", ":lua HBChangeInsideAnything()<Cr>", opts)
