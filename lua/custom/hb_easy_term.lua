@@ -1,62 +1,72 @@
 local hb = {
   command_home = "~/hb_easyterm_commands/",
   main_command_file = "main.sh",
+  instances = {},
 }
+
+local function hb_get_current_instance()
+  return hb.instances[vim.fn.tabpagenr()]
+end
+
+local function initialize_current_instance()
+  hb.instances[vim.fn.tabpagenr()] = {}
+end
 
 function HbEasyTermStart()
   -- window total  width
   local width = vim.api.nvim_win_get_width(0)
 
   vim.cmd("tabnew")
-  pcall(vim.cmd, "e " .. hb.command_home .. hb.main_command_file)
-  hb.command_window = vim.api.nvim_get_current_win()
-
-  vim.cmd("vsplit")
-  vim.cmd("term")
-  hb.term_window = vim.api.nvim_get_current_win()
-  hb.term_buff_name = vim.api.nvim_buf_get_name(0)
-
-  vim.cmd("Neotree dir=~/hb_easyterm_commands")
   vim.defer_fn(function()
-    vim.cmd("vertical resize 30")
+    initialize_current_instance()
+    pcall(vim.cmd, "e " .. hb.command_home .. hb.main_command_file)
+    hb_get_current_instance().command_window = vim.api.nvim_get_current_win()
 
-    vim.api.nvim_set_current_win(hb.term_window)
+    vim.cmd("vsplit")
+    vim.cmd("term")
+    hb_get_current_instance().term_window = vim.api.nvim_get_current_win()
+    hb_get_current_instance().term_buff_name = vim.api.nvim_buf_get_name(0)
 
+    vim.cmd("Neotree dir=~/hb_easyterm_commands")
     vim.defer_fn(function()
-      vim.cmd("vertical resize +" .. ((width / 2) * 0.4))
+      vim.cmd("vertical resize 30")
 
-      -- opening and closing it makes the window follow the input line ¯\_(ツ)_/¯
-      local open_and_close = vim.api.nvim_replace_termcodes("i", true, false, true)
-      vim.api.nvim_feedkeys(open_and_close, "t", false)
-      local leave_term_mode = vim.api.nvim_replace_termcodes("<C-\\><C-n>", true, false, true)
-      vim.api.nvim_feedkeys(leave_term_mode, "t", false)
+      vim.api.nvim_set_current_win(hb_get_current_instance().term_window)
+
       vim.defer_fn(function()
-        vim.api.nvim_set_current_win(hb.command_window)
+        vim.cmd("vertical resize +" .. ((width / 2) * 0.4))
+
+        -- opening and closing it makes the window follow the input line ¯\_(ツ)_/¯
+        local open_and_close = vim.api.nvim_replace_termcodes("i", true, false, true)
+        vim.api.nvim_feedkeys(open_and_close, "t", false)
+        local leave_term_mode = vim.api.nvim_replace_termcodes("<C-\\><C-n>", true, false, true)
+        vim.api.nvim_feedkeys(leave_term_mode, "t", false)
+        vim.defer_fn(function()
+          vim.api.nvim_set_current_win(hb_get_current_instance().command_window)
+        end, 10)
       end, 10)
     end, 20)
   end, 20)
 end
-
--- local function getRegister(char)
---   return vim.api.nvim_exec([[echo getreg(']] .. char .. [[')]], true):gsub("[\n\r]", "^J")
--- end
---
--- local function setRegister(char, content)
---   return vim.api.nvim_exec([[call setreg(']] .. char .. [[', ']] .. content .. [[')]], true)
--- end
 
 function HbEasyTermSend()
   local buffer_name = vim.api.nvim_buf_get_name(0)
   if not string.find(buffer_name, "hb_easyterm_commands") then
     return
   end
+
+  if hb_get_current_instance().command_window ~= vim.api.nvim_get_current_win() then
+    print("tab number and instance dont match")
+    return
+  end
+
   vim.cmd("norm vipy")
-  vim.api.nvim_set_current_win(hb.term_window)
+  vim.api.nvim_set_current_win(hb_get_current_instance().term_window)
   vim.cmd("norm pi")
   local leave_term_mode = vim.api.nvim_replace_termcodes("<Cr><C-\\><C-n>", true, false, true)
   vim.api.nvim_feedkeys(leave_term_mode, "t", false)
   vim.defer_fn(function()
-    vim.api.nvim_set_current_win(hb.command_window)
+    vim.api.nvim_set_current_win(hb_get_current_instance().command_window)
   end, 50)
 end
 
@@ -65,9 +75,13 @@ function HbEasyTermSendLine()
   if not string.find(buffer_name, "hb_easyterm_commands") then
     return
   end
+  if hb_get_current_instance().command_window ~= vim.api.nvim_get_current_win() then
+    print("tab number and instance dont match")
+    return
+  end
 
   vim.cmd("norm yy")
-  vim.api.nvim_set_current_win(hb.term_window)
+  vim.api.nvim_set_current_win(hb_get_current_instance().term_window)
   vim.defer_fn(function()
     vim.cmd("norm i")
     local cleanline_code = vim.api.nvim_replace_termcodes("<C-u>", true, false, true)
@@ -80,7 +94,7 @@ function HbEasyTermSendLine()
         local leave_term_mode = vim.api.nvim_replace_termcodes("<Cr><C-\\><C-n>", true, false, true)
         vim.api.nvim_feedkeys(leave_term_mode, "t", false)
         vim.defer_fn(function()
-          vim.api.nvim_set_current_win(hb.command_window)
+          vim.api.nvim_set_current_win(hb_get_current_instance().command_window)
         end, 50)
       end, 50)
     end, 50)
@@ -93,9 +107,9 @@ function HbEasyTermSendAndStay()
     return
   end
 
-  hb.last_cursor_position = vim.api.nvim_win_get_cursor(0)
+  hb_get_current_instance().last_cursor_position = vim.api.nvim_win_get_cursor(0)
   vim.cmd("norm yy")
-  vim.api.nvim_set_current_win(hb.term_window)
+  vim.api.nvim_set_current_win(hb_get_current_instance().term_window)
   vim.cmd("norm i")
   local cleanline_code = vim.api.nvim_replace_termcodes("<C-u>", true, false, true)
   vim.api.nvim_feedkeys(cleanline_code, "t", false)
@@ -112,7 +126,7 @@ end
 
 function HbEasyReturnWithNewCommand()
   local buffer_name = vim.api.nvim_buf_get_name(0)
-  if buffer_name ~= hb.term_buff_name then
+  if buffer_name ~= hb_get_current_instance().term_buff_name then
     print("not on hb term")
     return
   end
@@ -135,7 +149,7 @@ function HbEasyReturnWithNewCommand()
           vim.api.nvim_feedkeys(backsp, "t", false)
           vim.api.nvim_feedkeys(leave_term_mode, "t", false)
           vim.defer_fn(function()
-            vim.api.nvim_set_current_win(hb.command_window)
+            vim.api.nvim_set_current_win(hb_get_current_instance().command_window)
             vim.cmd("norm Vp")
           end, 50)
         end, 50)
