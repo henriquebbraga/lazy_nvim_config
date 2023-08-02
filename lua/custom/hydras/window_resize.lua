@@ -62,7 +62,7 @@ Hydra({
         splits.resize_right(2)
       end,
     },
-    { "=", cmd("WindowsEqualize"), { exit = true, desc = "equalize" } },
+    { "=", "<C-w>=", { desc = "equalize" } },
 
     { "s", pcmd("split", "E36") },
     { "<C-s>", pcmd("split", "E36"), { desc = false } },
@@ -72,8 +72,7 @@ Hydra({
     { "w", "<C-w>w", { exit = true, desc = false } },
     { "<C-w>", "<C-w>w", { exit = true, desc = false } },
 
-    { "z", cmd("WindowsMaximize"), { exit = true, desc = "maximize" } },
-    { "<C-z>", cmd("WindowsMaximize"), { exit = true, desc = false } },
+    { "z", cmd("<C-w>|<C-w>_"), { exit = true, desc = "maximize" } },
 
     { "o", "<C-w>o", { exit = true, desc = "remain only" } },
     { "<C-o>", "<C-w>o", { exit = true, desc = false } },
