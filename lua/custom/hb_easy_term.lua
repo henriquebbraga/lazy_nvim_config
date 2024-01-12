@@ -4,12 +4,19 @@ local hb = {
   instances = {},
 }
 
-local function hb_get_current_instance()
-  return hb.instances[vim.fn.tabpagenr()]
+local function get_hb_instance()
+  if hb.instances[vim.api.nvim_get_current_win()] == nil then
+    hb.instances[vim.api.nvim_get_current_win()] = {}
+  end
+  return hb.instances[vim.api.nvim_get_current_win()]
 end
 
-local function initialize_current_instance()
-  hb.instances[vim.fn.tabpagenr()] = {}
+local function get_hb_term()
+  for _, v in pairs(hb.instances) do
+    if v.term_window == vim.api.nvim_get_current_win() then
+      return v
+    end
+  end
 end
 
 function HbEasyTermStart()
@@ -18,20 +25,20 @@ function HbEasyTermStart()
 
   vim.cmd("tabnew")
   vim.defer_fn(function()
-    initialize_current_instance()
+    local hb_instance = get_hb_instance()
     pcall(vim.cmd, "e " .. hb.command_home .. hb.main_command_file)
-    hb_get_current_instance().command_window = vim.api.nvim_get_current_win()
+    hb_instance.command_window = vim.api.nvim_get_current_win()
 
     vim.cmd("vsplit")
     vim.cmd("term")
-    hb_get_current_instance().term_window = vim.api.nvim_get_current_win()
-    hb_get_current_instance().term_buff_name = vim.api.nvim_buf_get_name(0)
+    hb_instance.term_window = vim.api.nvim_get_current_win()
+    hb_instance.term_buff_name = vim.api.nvim_buf_get_name(0)
 
     vim.cmd("Neotree dir=~/hb_easyterm_commands")
     vim.defer_fn(function()
-      vim.cmd("vertical resize 30")
+      vim.cmd("vertical resize 25")
 
-      vim.api.nvim_set_current_win(hb_get_current_instance().term_window)
+      vim.api.nvim_set_current_win(hb_instance.term_window)
 
       vim.defer_fn(function()
         vim.cmd("vertical resize +" .. ((width / 2) * 0.4))
@@ -42,7 +49,7 @@ function HbEasyTermStart()
         local leave_term_mode = vim.api.nvim_replace_termcodes("<C-\\><C-n>", true, false, true)
         vim.api.nvim_feedkeys(leave_term_mode, "t", false)
         vim.defer_fn(function()
-          vim.api.nvim_set_current_win(hb_get_current_instance().command_window)
+          vim.api.nvim_set_current_win(hb_instance.command_window)
         end, 10)
       end, 10)
     end, 20)
@@ -54,19 +61,20 @@ function HbEasyTermSend()
   if not string.find(buffer_name, "hb_easyterm_commands") then
     return
   end
+  local hb_instance = get_hb_instance()
 
-  if hb_get_current_instance().command_window ~= vim.api.nvim_get_current_win() then
+  if hb_instance.command_window ~= vim.api.nvim_get_current_win() then
     print("tab number and instance dont match")
     return
   end
 
   vim.cmd("norm vipy")
-  vim.api.nvim_set_current_win(hb_get_current_instance().term_window)
+  vim.api.nvim_set_current_win(hb_instance.term_window)
   vim.cmd("norm pi")
   local leave_term_mode = vim.api.nvim_replace_termcodes("<Cr><C-\\><C-n>", true, false, true)
   vim.api.nvim_feedkeys(leave_term_mode, "t", false)
   vim.defer_fn(function()
-    vim.api.nvim_set_current_win(hb_get_current_instance().command_window)
+    vim.api.nvim_set_current_win(hb_instance.command_window)
   end, 50)
 end
 
@@ -75,13 +83,10 @@ function HbEasyTermSendLine()
   if not string.find(buffer_name, "hb_easyterm_commands") then
     return
   end
-  if hb_get_current_instance().command_window ~= vim.api.nvim_get_current_win() then
-    print("tab number and instance dont match")
-    return
-  end
+  local hb_instance = get_hb_instance()
 
   vim.cmd("norm yy")
-  vim.api.nvim_set_current_win(hb_get_current_instance().term_window)
+  vim.api.nvim_set_current_win(hb_instance.term_window)
   vim.defer_fn(function()
     vim.cmd("norm i")
     local cleanline_code = vim.api.nvim_replace_termcodes("<C-u>", true, false, true)
@@ -94,7 +99,7 @@ function HbEasyTermSendLine()
         local leave_term_mode = vim.api.nvim_replace_termcodes("<Cr><C-\\><C-n>", true, false, true)
         vim.api.nvim_feedkeys(leave_term_mode, "t", false)
         vim.defer_fn(function()
-          vim.api.nvim_set_current_win(hb_get_current_instance().command_window)
+          vim.api.nvim_set_current_win(hb_instance.command_window)
         end, 50)
       end, 50)
     end, 50)
@@ -106,10 +111,11 @@ function HbEasyTermSendAndStay()
   if not string.find(buffer_name, "hb_easyterm_commands") then
     return
   end
+  local hb_instance = get_hb_instance()
 
-  hb_get_current_instance().last_cursor_position = vim.api.nvim_win_get_cursor(0)
+  hb_instance.last_cursor_position = vim.api.nvim_win_get_cursor(0)
   vim.cmd("norm yy")
-  vim.api.nvim_set_current_win(hb_get_current_instance().term_window)
+  vim.api.nvim_set_current_win(hb_instance.term_window)
   vim.cmd("norm i")
   local cleanline_code = vim.api.nvim_replace_termcodes("<C-u>", true, false, true)
   vim.api.nvim_feedkeys(cleanline_code, "t", false)
@@ -125,8 +131,9 @@ function HbEasyTermSendAndStay()
 end
 
 function HbEasyReturnWithNewCommand()
+  local hb_instance = get_hb_term()
   local buffer_name = vim.api.nvim_buf_get_name(0)
-  if buffer_name ~= hb_get_current_instance().term_buff_name then
+  if buffer_name ~= hb_instance.term_buff_name then
     print("not on hb term")
     return
   end
@@ -149,7 +156,7 @@ function HbEasyReturnWithNewCommand()
           vim.api.nvim_feedkeys(backsp, "t", false)
           vim.api.nvim_feedkeys(leave_term_mode, "t", false)
           vim.defer_fn(function()
-            vim.api.nvim_set_current_win(hb_get_current_instance().command_window)
+            vim.api.nvim_set_current_win(hb_instance.command_window)
             vim.cmd("norm Vp")
           end, 50)
         end, 50)
@@ -165,5 +172,6 @@ keymap("n", "<leader>wt", ":lua HbEasyTermStart()<Cr>", opts)
 keymap("n", "<leader>c", ":lua HbEasyTermSend()<Cr>", opts)
 keymap("n", "<leader>l", ":lua HbEasyTermSendLine()<Cr>", opts)
 
-keymap("n", "<leader>sn", ":lua HbEasyTermSendAndStay()<Cr>", opts)
-keymap("t", "<leader>gn", "<C-\\><C-n>:lua HbEasyReturnWithNewCommand()<Cr>", opts)
+-- keymap("n", "<leader>sn", ":lua HbEasyTermSendAndStay()<Cr>", opts)
+-- keymap("t", "<leader>gn", "<C-\\><C-n>:lua HbEasyReturnWithNewCommand()<Cr>", opts)
+-- keymap("n", "<leader>gn", ":lua HbEasyReturnWithNewCommand()<Cr>", opts)
