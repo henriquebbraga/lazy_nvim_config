@@ -1,0 +1,46 @@
+{
+  "awk": "awk",
+  "brew": {
+    "search": "search",
+    "info": "info",
+    "install": "install",
+    "update": "update",
+    "upgrade": "upgrade",
+    "uninstall": "uninstall",
+    "list": "list"
+  },
+  "cat": "print file contents",
+  "chmod": "chmod",
+  "curl": "curl",
+  "crontab": { "-e": "config file" },
+  "docker": {
+    "ps": "prints containers info"
+  },
+  "docker-compose": {
+    "up": "up",
+    "down": "down"
+  },
+  "git": {
+    "add": "add",
+    "clone": "clone",
+    "init": "init",
+    "status": "status",
+    "branch": "branch",
+    "commit": "commit",
+    "reset": "reset",
+    "fetch": "fetch",
+    "push": "push",
+    "pull": "pull",
+  },
+  "kill": {
+    "-9": "-9"
+  },
+  "killall": "killall",
+  "mvn": {
+    "clean": {
+      "verify": "verify",
+      "install": "package",
+    }
+  },
+  "ssh": "secure shell"
+}

@@ -1,6 +1,3 @@
--- Keymaps are automatically loaded on the VeryLazy event
--- Default keymaps that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/keymaps.lua
--- Add any additional keymaps here
 require("config.keymap.diagnostic")
 
 local default_opts = {
@@ -9,16 +6,16 @@ local default_opts = {
 }
 
 local function map(mode, lhs, rhs, opts)
+  local new_opts = {}
+  for k, v in pairs(default_opts) do
+    new_opts[k] = v
+  end
   if opts then
     for k, v in pairs(opts) do
-      default_opts[k] = v
+      new_opts[k] = v
     end
   end
-  vim.keymap.set(mode, lhs, rhs, default_opts)
-end
-Grap_err, Grapple = pcall(require, "grapple")
-if Grap_err then
-  print("Grapple not loaded")
+  vim.keymap.set(mode, lhs, rhs, new_opts)
 end
 
 -- MAPS AREA
@@ -38,15 +35,39 @@ map("x", "x", '"_x', { desc = "Delete to blackhole reg" })
 map("n", "x", '"_x', { desc = "Delete to blackhole reg" })
 
 -- stop undo
-map("i", " ", "<C-g>u ")
-map("i", ",", "<C-g>u,")
-map("i", ".", "<C-g>u.")
-map("i", ";", "<C-g>u;")
+map("i", " ", "<C-g>u ", { desc = "Add undo step" })
+map("i", ",", "<C-g>u,", { desc = "Add undo step" })
+map("i", ".", "<C-g>u.", { desc = "Add undo step" })
+map("i", ";", "<C-g>u;", { desc = "Add undo step" })
 
 -- easy access
 map("i", "<C-j>", "<Esc>", { desc = "Alias for Esc" })
 map("i", "<C-l>", "<Esc>A", { desc = "Go to end of the line" })
 map("n", "<C-p>", "<C-i>", { desc = "Forward in window history" })
+map("i", "<C-a>", "<C-O>A", { desc = "Easy go to end of line" })
+map("n", "-", ":Oil<Cr>", { desc = "Search word under cursor." })
+map("n", "gl", function()
+  vim.defer_fn(function()
+    SpaceToEnterLayer:activate()
+    vim.api.nvim_feedkeys("i", "n", false)
+  end, 10)
+  vim.ui.input({
+    prompt = "line number",
+  }, function(input)
+    if input ~= nil then
+      vim.api.nvim_feedkeys(input .. "gg", "n", false)
+    end
+  end)
+end, { desc = "Search word under cursor." })
+
+
+map("v", "p", "P", { desc = "paste without changing registers" })
+map("x", "p", "P", { desc = "paste without changing registers" })
+
+-- ergo keyboard helpers arstneiolcdhum
+map("", "m", "w", { desc = "word shortcut" })
+map("", "l", "b", { desc = "back shortcut" })
+map("", "h", "ve", { desc = "quick shortcut" })
 
 -- pounce
 map("x", "s", "<cmd>Pounce<cr>", { desc = "Pounce" })
@@ -63,16 +84,43 @@ map("n", "<BS>u", "<C-w>j", { desc = "Go to window below" })
 map("n", "<BS>i", "<C-w>l", { desc = "Go to window to the right" })
 map("n", "<BS>n", "<C-w>h", { desc = "Go to window to the left" })
 
-map("n", "<Tab>", ":tabNext<Cr>", { desc = "Next tab" })
+-- window management
+map("n", "<leader>rr", ":vs<Cr>", { desc = "New vertical split" })
+map("n", "<leader>rd", ":q<Cr>", { desc = "Close current window" })
+map("n", "<leader>ro", "<C-W>o", { desc = "Close all other windows" })
+map("n", "<leader>rs", ":lua vim.lsp.buf.format()<Cr>:w<Cr>", { desc = "Save window/buffer" })
 
-map("n", "<BS><BS>", ":GrapplePopup tags<Cr>", { desc = "Grapple picker" })
-map("n", "<BS>g", ":lua Grapple.toggle()<Cr>", { desc = "Add Grapple tag" })
-map("n", "<BS>o", ":Telescope buffers<Cr>", { desc = "Open buffer" })
-map("n", "<BS>m", ":lua print('nothing here yet')", { desc = "nothing" })
+map("n", "<Tab>", ":tabnext<Cr>", { desc = "Next tab" })
+map("n", "<S-Tab>", ":tabprevious<Cr>", { desc = "Previous tab" })
+
+map("n", "<BS><BS>", ":Grapple open_tags<Cr>", { desc = "Grapple picker" })
+map("n", "<BS>m", ":Grapple toggle<Cr>", { desc = "add to Grapple" })
 map("n", "<BS>h", ":lua print('nothing here yet')", { desc = "nothing" })
 
 map("n", "<leader><BS>", ":lua print('pick something!!!!')<Cr>", { desc = "nothing" })
 map("n", "<BS><leader>", ":lua print('pick something on this side!!!!')<Cr>", { desc = "nothing" })
 
-map("n", "<BS>a", ":lua HBChangeInsideAnything()<Cr>", { desc = "change inside anything" })
-map("n", "<BS>r", ":lua HBChangeTillAnything()<Cr>", { desc = "change till anything" })
+-- custom java stuff
+map("n", "<leader>T", ":lua JavaUnitTestHelper()<Cr>", { desc = "open test or original file" })
+map("n", "<leader>R", ":lua JavaRunUnitTests()<Cr>", { desc = "run unit test" })
+
+-- AI
+
+-- highlighting
+map("v", "<leader>r", ":<C-u>HSHighlight 3<Cr>", { desc = "Highlight" })
+map("v", "<leader>h", ":<C-u>HSRmHighlight<Cr>", { desc = "Remove highlight" })
+
+-- terminal
+map("t", "<esc><esc>", "<C-\\><C-n>")
+
+-- Lazygit gitlazy
+map("n", "<leader>gl", function()
+  vim.cmd("TermExec name=lazygit cmd='lazygit && exit' direction=float")
+  QuickEscKey:activate()
+end, { desc = "Lazygit" })
+
+-- Code actions
+map("n", "<leader>cr", ":lua vim.lsp.buf.rename()<Cr>", { desc = "Lsp rename" })
+map("n", "<leader>ca", ":lua vim.lsp.buf.code_action()<Cr>", { desc = "Lsp code action" })
+map("n", "<S-K>", ":lua vim.lsp.buf.hover()<Cr>", { desc = "Lsp hover" })
+map("i", "<C-K>", ":lua vim.lsp.buf.signature_help()<Cr>", { desc = "Lsp hover" })

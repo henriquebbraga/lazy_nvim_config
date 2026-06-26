@@ -1,5 +1,5 @@
 local Hydra = require("hydra")
-local splits = require("smart-splits")
+-- local splits = require("smart-splits")
 
 local cmd = require("hydra.keymap-util").cmd
 local pcmd = require("hydra.keymap-util").pcmd
@@ -7,7 +7,7 @@ local pcmd = require("hydra.keymap-util").pcmd
 local window_hint = [[
  ^^^^^^^^^^^^     Move      ^^    Size   ^^   ^^     Split
  ^^^^^^^^^^^^-------------  ^^-----------^^   ^^---------------
- ^ ^ _e_ ^ ^  ^ ^ _E_ ^ ^   ^  ^ _J_   ^   _s_: horizontally 
+ ^ ^ _e_ ^ ^  ^ ^ _E_ ^ ^   ^  ^ _J_   ^   _s_: horizontally
  _n_ ^ ^ _i_  _N_ ^ ^ _I_   ^ _G_ ^  _Y_   _v_: vertically
  ^ ^ _u_ ^ ^  ^ ^ _U_ ^ ^   ^  ^ _<_   ^   _q_, _c_: close
  focus^^^^^^  window^^^^^^  ^_=_: equalize^   _z_: maximize
@@ -41,47 +41,47 @@ Hydra({
     {
       "G",
       function()
-        splits.resize_left(2)
+        -- splits.resize_left(2)
       end,
     },
     {
       "<",
       function()
-        splits.resize_down(2)
+        -- splits.resize_down(2)
       end,
     },
     {
       "J",
       function()
-        splits.resize_up(2)
+        -- splits.resize_up(2)
       end,
     },
     {
       "Y",
       function()
-        splits.resize_right(2)
+        -- splits.resize_right(2)
       end,
     },
-    { "=", "<C-w>=", { desc = "equalize" } },
+    { "=",     "<C-w>=",              { desc = "equalize" } },
 
-    { "s", pcmd("split", "E36") },
-    { "<C-s>", pcmd("split", "E36"), { desc = false } },
-    { "v", pcmd("vsplit", "E36") },
+    { "s",     pcmd("split", "E36") },
+    { "<C-s>", pcmd("split", "E36"),  { desc = false } },
+    { "v",     pcmd("vsplit", "E36") },
     { "<C-v>", pcmd("vsplit", "E36"), { desc = false } },
 
-    { "w", "<C-w>w", { exit = true, desc = false } },
-    { "<C-w>", "<C-w>w", { exit = true, desc = false } },
+    { "w",     "<C-w>w",              { exit = true, desc = false } },
+    { "<C-w>", "<C-w>w",              { exit = true, desc = false } },
 
-    { "z", cmd("<C-w>|<C-w>_"), { exit = true, desc = "maximize" } },
+    { "z",     cmd("<C-w>|<C-w>_"),   { exit = true, desc = "maximize" } },
 
-    { "o", "<C-w>o", { exit = true, desc = "remain only" } },
-    { "<C-o>", "<C-w>o", { exit = true, desc = false } },
+    { "o",     "<C-w>o",              { exit = true, desc = "remain only" } },
+    { "<C-o>", "<C-w>o",              { exit = true, desc = false } },
 
-    { "c", pcmd("close", "E444") },
-    { "q", pcmd("close", "E444"), { desc = "close window" } },
+    { "c",     pcmd("close", "E444") },
+    { "q",     pcmd("close", "E444"), { desc = "close window" } },
     { "<C-c>", pcmd("close", "E444"), { desc = false } },
     { "<C-q>", pcmd("close", "E444"), { desc = false } },
 
-    { "<Esc>", nil, { exit = true, desc = false } },
+    { "<Esc>", nil,                   { exit = true, desc = false } },
   },
 })

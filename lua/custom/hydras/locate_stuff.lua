@@ -1,45 +1,27 @@
-local hydra = require("hydra")
+local layers_nvim = require("layers")
 
-local hint = [[
-  _j_/_u_: move down 5
-  _k_/_e_: move up 5
-  ^
-  _b_: Toggle block
-  ^
-  _d_: Document symbols 
-  _n_: Navbuddy
-  _f_: Fuzzy finder
-  ^
-  _q_: quit
-]]
+local layer = layers_nvim.mode.new()
 
-hydra({
-  name = "Move inside files",
-  hint = hint,
-  config = {
-    color = "red",
-    invoke_on_body = true,
-    hint = {
-      border = "rounded",
-      type = "window",
-      position = "bottom-right",
-    },
-    on_enter = function() end,
-    on_exit = function() end,
-  },
-  mode = { "n" },
-  body = "<leader>m",
-  heads = {
-    { "j", "5j", { silent = true } },
-    { "u", "5j", { silent = true } },
-    { "k", "5k", { silent = true } },
-    { "e", "5k", { silent = true } },
+local newMap = function(lhs, rhs, desc)
+  layer:add("n", lhs, rhs, { silent = true, noremap = true, desc = desc })
+end
 
-    { "d", ":Telescope lsp_document_symbols<Cr>", { exit = true, silent = true } },
-    { "f", ":Telescope current_buffer_fuzzy_find<Cr>", { exit = true, silent = true } },
-    { "n", ":Navbuddy<CR>", { exit = true, silent = true } },
-    { "b", ":Block<CR>", { silent = true } },
+local neoscroll = require('neoscroll')
 
-    { "q", nil, { exit = true, nowait = true, desc = "exit" } },
-  },
-})
+local function scroll(lines, duration)
+  return function()
+    neoscroll.scroll(lines, { duration = duration })
+  end
+end
+
+newMap("e", scroll(-10, 50), "10 up")
+newMap("u", scroll(10, 50), "10 down")
+
+newMap("n", scroll(-25, 75), "25 up")
+newMap("h", scroll(25, 75), "25 down")
+
+newMap("<Esc>", function() layer:deactivate() end, "leave")
+
+layer:auto_show_help()
+
+vim.keymap.set("n", "<leader>m", function() layer:toggle() end, { silent = true, noremap = true })

@@ -28,7 +28,7 @@ hydra({
     on_exit = function() end,
   },
   mode = { "n" },
-  body = "<leader>tt",
+  body = "<leader>th",
   heads = {
     { "n", "<C-w>h", { silent = true } },
     { "i", "<C-w>l", { silent = true } },

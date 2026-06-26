@@ -1,8 +1,8 @@
--- bootstrap lazy.nvim, LazyVim and your plugins
-
-vim.g.loaded_netrw = 1
-vim.g.loaded_netrwPlugin = 1
-
+require("config.options")
+require("config.keymaps")
 require("config.lazy")
-require("custom.hb_easy_term")
-require("custom.hydra_setup")
+require("custom.hb_easy_term.main")
+require("custom.java_test_helper")
+require("custom.hydras.locate_stuff")
+require("custom.hydras.escape_on_term")
+require("custom.hydras.space_to_enter")

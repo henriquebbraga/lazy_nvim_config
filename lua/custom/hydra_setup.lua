@@ -1,3 +1,5 @@
 require("custom.hydras.window_resize")
 require("custom.hydras.locate_stuff")
 require("custom.hydras.terminal_helper")
+require("custom.hydras.space_to_enter")
+require("custom.hydras.escape_on_term")

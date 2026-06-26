@@ -1,33 +1,34 @@
 local jdtls = require("jdtls")
 local on_attach = require("custom.lsp_handler").on_attach -- change to yours
 
-local root_dir = require("jdtls.setup").find_root({ "packageInfo" }, "Config")
-local home = os.getenv("HOME")
-local eclipse_workspace = home .. "/.local/share/eclipse/" .. vim.fn.fnamemodify(root_dir, ":p:h:t")
+function main()
+  local root_dir = vim.fs.dirname(vim.fs.find({ "gradlew", ".git", "mvnw" }, { upward = true })[1])
+  local home = os.getenv("HOME")
+  local eclipse_workspace = home .. "/.local/share/eclipse/" .. vim.fn.fnamemodify(root_dir, ":p:h:t")
 
-local ws_folders_jdtls = {}
-if root_dir then
-  local file = io.open(root_dir .. "/.bemol/ws_root_folders")
-  if file then
-    for line in file:lines() do
-      table.insert(ws_folders_jdtls, "file://" .. line)
-    end
-    file:close()
-  end
+  -- vim.uv.os_setenv("JAVA_HOME",  "/opt/homebrew/Cellar/openjdk@21/21.0.9/libexec/openjdk.jdk/Contents/Home")
+
+  vim.cmd(":set tabstop=4")
+  vim.cmd(":set shiftwidth=4")
+
+  local config = {
+    on_attach = on_attach,
+    cmd = {
+      "jdtls",                                                       -- need to be on your PATH
+      "--jvm-arg=-javaagent:" .. home .. "/tools/lombok/lombok.jar", -- need for lombok magic
+      -- "-configuration",
+      -- home .. "/tools/jdtls/config_mac",
+      "-data",
+      eclipse_workspace,
+    },
+    root_dir = root_dir,
+  }
+
+  jdtls.start_or_attach(config)
 end
 
-local config = {
-  on_attach = on_attach,
-  cmd = {
-    "jdtls", -- need to be on your PATH
-    "--jvm-arg=-javaagent:" .. home .. "/Developer/lombok.jar", -- need for lombok magic
-    "-data",
-    eclipse_workspace,
-  },
-  root_dir = root_dir,
-  init_options = {
-    workspaceFolders = ws_folders_jdtls,
-  },
-}
+local success = pcall(main)
 
-jdtls.start_or_attach(config)
+if not success then
+  vim.defer_fn(main, 1000)
+end
